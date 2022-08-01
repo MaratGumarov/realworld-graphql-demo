@@ -5,11 +5,14 @@ type Query {
     findArticleByIdsWithAuthor(ids: [ID]): [Article]
     articlesByAuthor(id: ID): [Article]
     articles: [Article]
+    findArticlesByLabel(label: Label): [Article]
 }
 
 interface Article{
     id:ID
     author:Author
+    label:Label
+    description: String
 }
 
 type NewsArticle implements Article{
@@ -18,17 +21,20 @@ type NewsArticle implements Article{
     text: String
     description: String
     date: String
+    label:Label
 }
 
 type StaticImageArticle implements Article{
     id:ID
     author:Author
     url:String
+    label:Label
+    description: String
 }
 
 type ArticlePage{
-edje:Edje
-pageInfo:PageInfo
+    edje:Edje
+    pageInfo:PageInfo
 }
 
 type Author {
@@ -49,4 +55,12 @@ type PageInfo{
     hasPreviousPage: Boolean
     startCursor: Boolean
     endCursor: Boolean
+}
+
+enum Label {
+    SPORT,
+    POLITICS,
+    SCIENCE,
+    WORLD,
+    OTHER
 }
