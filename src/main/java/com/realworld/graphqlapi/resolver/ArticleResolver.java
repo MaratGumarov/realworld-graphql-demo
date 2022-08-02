@@ -3,6 +3,7 @@ package com.realworld.graphqlapi.resolver;
 
 import com.realworld.graphqlapi.exceptions.AuthorIsNotPresentException;
 import com.realworld.graphqlapi.model.Article;
+import com.realworld.graphqlapi.model.Label;
 import com.realworld.graphqlapi.repository.ArticleRepository;
 
 import graphql.execution.DataFetcherResult;
@@ -59,6 +60,10 @@ public class ArticleResolver implements GraphQLQueryResolver {
 
     public Iterable<Article> articles(){
         return articleRepository.getAllArticles();
+    }
+
+    public List<Article> findArticlesByLabel(Label label) {
+        return articleRepository.findArticlesByLabel(label);
     }
 
 }

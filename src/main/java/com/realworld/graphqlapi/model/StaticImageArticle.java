@@ -13,4 +13,6 @@ public class StaticImageArticle implements Article {
     private UUID id;
     private String url;
     private Author author;
+    private String description;
+    private Label label;
 }
