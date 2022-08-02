@@ -40,3 +40,11 @@ type Author {
     firstName: String
     lastName: String
 }
+
+enum Label {
+    SPORT,
+    POLITICS,
+    SCIENCE,
+    WORLD,
+    OTHER
+}
