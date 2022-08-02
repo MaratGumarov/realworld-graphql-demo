@@ -1,6 +1,7 @@
 package com.realworld.graphqlapi.resolver;
 
 
+import com.realworld.graphqlapi.connection.ConnectionCursorUtil;
 import com.realworld.graphqlapi.exceptions.AuthorIsNotPresentException;
 import com.realworld.graphqlapi.model.Article;
 import com.realworld.graphqlapi.model.Label;
@@ -8,19 +9,24 @@ import com.realworld.graphqlapi.repository.ArticleRepository;
 
 import graphql.execution.DataFetcherResult;
 import graphql.kickstart.tools.GraphQLQueryResolver;
+import graphql.relay.Connection;
+import graphql.relay.ConnectionCursor;
+import graphql.relay.DefaultConnection;
+import graphql.relay.DefaultEdge;
+import graphql.relay.DefaultPageInfo;
+import graphql.relay.Edge;
+import lombok.RequiredArgsConstructor;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 @Component
+@RequiredArgsConstructor
 public class ArticleResolver implements GraphQLQueryResolver {
     private final ArticleRepository articleRepository;
-
-    public ArticleResolver(ArticleRepository articleRepository) {
-        this.articleRepository = articleRepository;
-    }
+    private final ConnectionCursorUtil cursorUtil;
 
     public List<Article> findArticleByIds(List<UUID> ids) {
         return ids.stream().map(articleRepository::getById).collect(Collectors.toList());
@@ -52,13 +58,13 @@ public class ArticleResolver implements GraphQLQueryResolver {
     }
 
     public List<Article> articlesByAuthor(UUID id) {
-        return StreamSupport.stream(articleRepository.getAllArticles().spliterator(), false)
-                .filter(article ->
-                        article.getAuthor().getId().equals(id))
-                .collect(Collectors.toList());
+        return articleRepository.getAllArticles().stream()
+            .filter(article ->
+                article.getAuthor().getId().equals(id))
+            .collect(Collectors.toList());
     }
 
-    public Iterable<Article> articles(){
+    public List<Article> allArticles() {
         return articleRepository.getAllArticles();
     }
 
@@ -66,4 +72,25 @@ public class ArticleResolver implements GraphQLQueryResolver {
         return articleRepository.findArticlesByLabel(label);
     }
 
+    public Connection<Article> articles(int first, @Nullable String cursor) {
+        List<Article> articles = cursor == null ? articleRepository.getAllArticles()
+            : articleRepository.getAfter(cursorUtil.getIdByCursor(cursor));
+
+        List<Edge<Article>> edges = articles
+            .stream()
+            .map(article -> new DefaultEdge<>(article, cursorUtil.from(article)))
+            .limit(first)
+            .collect(Collectors.toUnmodifiableList());
+
+        ConnectionCursor startCursor = cursorUtil.getStartCursor(edges);
+        ConnectionCursor endCursor = cursorUtil.getEndCursor(edges);
+
+        return new DefaultConnection<>(
+            edges,
+            new DefaultPageInfo(
+                startCursor,
+                endCursor,
+                cursor != null,
+                edges.size() >= first));
+    }
 }

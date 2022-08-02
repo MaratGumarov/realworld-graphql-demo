@@ -7,11 +7,13 @@ import java.util.List;
 import java.util.UUID;
 
 public interface ArticleRepository {
-    Iterable<Article> getAllArticles();
+    List<Article> getAllArticles();
 
     Article getById(UUID id);
 
     Article findArticleByIdWithAuthor(UUID id);
 
     List<Article> findArticlesByLabel(Label label);
+
+    List<Article> getAfter(UUID id);
 }
