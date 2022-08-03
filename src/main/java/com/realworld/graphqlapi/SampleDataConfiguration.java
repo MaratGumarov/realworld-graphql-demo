@@ -6,10 +6,9 @@ import com.realworld.graphqlapi.repository.ArticleRepository;
 import com.realworld.graphqlapi.repository.AuthorRepository;
 import com.realworld.graphqlapi.repository.DummyArticleRepository;
 import com.realworld.graphqlapi.repository.DummyAuthorRepository;
-import com.realworld.graphqlapi.resolver.ArticleResolver;
 import graphql.analysis.MaxQueryDepthInstrumentation;
 import graphql.execution.instrumentation.Instrumentation;
-import graphql.kickstart.tools.SchemaParser;
+import graphql.kickstart.tools.SchemaParserDictionary;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -29,13 +28,10 @@ public class SampleDataConfiguration {
     }
 
     @Bean
-    SchemaParser parser(ArticleRepository repository, ArticleResolver resolver) {
-        return SchemaParser.newParser()
-            .resolvers(resolver)
-            .file("graphql/schema.graphqls")
-            .dictionary("NewsArticle", NewsArticle.class)
-            .dictionary("StaticImageArticle", StaticImageArticle.class)
-            .build();
+    SchemaParserDictionary dictionary() {
+        return new SchemaParserDictionary()
+            .add("NewsArticle", NewsArticle.class)
+            .add("StaticImageArticle", StaticImageArticle.class);
     }
 
     @Bean
