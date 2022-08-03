@@ -1,0 +1,9 @@
+---
+version: '2'
+services:
+
+  kafka-ui:
+    container_name: realworld-graphql
+    image: realworld/graphql-demo:latest
+    ports:
+      - 80:8080

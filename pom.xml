@@ -15,6 +15,8 @@
 	<description>GraphQL implementation for RealWorld</description>
 	<properties>
 		<java.version>11</java.version>
+		<dockerfile-maven-plugin.version>1.4.10</dockerfile-maven-plugin.version>
+		<git.revision>latest</git.revision>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -68,6 +70,31 @@
 						</exclude>
 					</excludes>
 				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>com.spotify</groupId>
+				<artifactId>dockerfile-maven-plugin</artifactId>
+				<version>${dockerfile-maven-plugin.version}</version>
+				<configuration>
+					<skipPush>true</skipPush>
+				</configuration>
+				<executions>
+					<execution>
+						<id>default</id>
+						<phase>package</phase>
+						<goals>
+							<goal>build</goal>
+						</goals>
+						<configuration>
+							<tag>${git.revision}</tag>
+							<repository>realworld/graphql-demo</repository>
+							<buildArgs>
+								<JAR_FILE>${project.build.finalName}.jar</JAR_FILE>
+								<JAR_NAME>${project.artifactId}.jar</JAR_NAME>
+							</buildArgs>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>
