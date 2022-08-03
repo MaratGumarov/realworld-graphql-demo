@@ -14,6 +14,7 @@ public class NewsArticle implements Article {
     private String text;
     private String description;
     private Author author;
+    private UUID authorId;
     private String date;
     private Label label;
 }

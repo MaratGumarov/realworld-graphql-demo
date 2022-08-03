@@ -16,4 +16,8 @@ public interface ArticleRepository {
     List<Article> findArticlesByLabel(Label label);
 
     List<Article> getAfter(UUID id);
+//
+//    List<NewsArticle> findNewsArticles();
+//
+//    List<StaticImageArticle> findStaticImagesArticles();
 }
