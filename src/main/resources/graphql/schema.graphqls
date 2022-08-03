@@ -9,6 +9,7 @@ type Query {
     articles(first: Int!, from: String): ArticleConnection @connection (for: "Article")
     allArticles: [Article]
     findArticlesByLabel(label: Label): [Article]
+    authorById(id: ID): Author
 }
 
 interface Article{
@@ -39,6 +40,7 @@ type Author {
     id: ID
     firstName: String
     lastName: String
+    friends: [Author]
 }
 
 enum Label {
