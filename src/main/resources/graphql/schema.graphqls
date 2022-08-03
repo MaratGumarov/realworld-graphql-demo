@@ -14,13 +14,15 @@ type Query {
 
 interface Article{
     id:ID
-    author:Author
+    authorId:ID
+    author: Author
     label:Label
     description: String
 }
 
 type NewsArticle implements Article{
     id: ID
+    authorId: ID
     author: Author
     text: String
     description: String
@@ -30,7 +32,8 @@ type NewsArticle implements Article{
 
 type StaticImageArticle implements Article{
     id:ID
-    author:Author
+    authorId:ID
+    author: Author
     url:String
     label:Label
     description: String

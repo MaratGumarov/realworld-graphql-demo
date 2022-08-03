@@ -100,4 +100,16 @@ public class ArticleResolver implements GraphQLQueryResolver {
     public Author authorById(UUID uuid){
         return authorRepository.getById(uuid);
     }
+
+//    Other way to add child classes
+//    newsArticle :[NewsArticle]
+//    staticImageArticles :[StaticImageArticle]
+
+//    public List<NewsArticle> newsArticle() {
+//        return articleRepository.findNewsArticles();
+//    }
+//
+//    public List<StaticImageArticle> staticImageArticles() {
+//        return articleRepository.findStaticImagesArticles();
+//    }
 }
