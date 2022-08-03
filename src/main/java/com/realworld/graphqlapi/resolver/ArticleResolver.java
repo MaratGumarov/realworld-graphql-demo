@@ -4,9 +4,11 @@ package com.realworld.graphqlapi.resolver;
 import com.realworld.graphqlapi.connection.ConnectionCursorUtil;
 import com.realworld.graphqlapi.exceptions.AuthorIsNotPresentException;
 import com.realworld.graphqlapi.model.Article;
+import com.realworld.graphqlapi.model.Author;
 import com.realworld.graphqlapi.model.Label;
 import com.realworld.graphqlapi.repository.ArticleRepository;
 
+import com.realworld.graphqlapi.repository.AuthorRepository;
 import graphql.execution.DataFetcherResult;
 import graphql.kickstart.tools.GraphQLQueryResolver;
 import graphql.relay.Connection;
@@ -26,6 +28,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ArticleResolver implements GraphQLQueryResolver {
     private final ArticleRepository articleRepository;
+    private final AuthorRepository authorRepository;
     private final ConnectionCursorUtil cursorUtil;
 
     public List<Article> findArticleByIds(List<UUID> ids) {
@@ -92,5 +95,9 @@ public class ArticleResolver implements GraphQLQueryResolver {
                 endCursor,
                 cursor != null,
                 edges.size() >= first));
+    }
+
+    public Author authorById(UUID uuid){
+        return authorRepository.getById(uuid);
     }
 }
