@@ -7,9 +7,14 @@ import com.realworld.graphqlapi.repository.AuthorRepository;
 import com.realworld.graphqlapi.repository.DummyArticleRepository;
 import com.realworld.graphqlapi.repository.DummyAuthorRepository;
 import com.realworld.graphqlapi.resolver.ArticleResolver;
+import graphql.analysis.MaxQueryDepthInstrumentation;
+import graphql.execution.instrumentation.Instrumentation;
 import graphql.kickstart.tools.SchemaParser;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Configuration
 public class SampleDataConfiguration {
@@ -31,5 +36,11 @@ public class SampleDataConfiguration {
             .dictionary("NewsArticle", NewsArticle.class)
             .dictionary("StaticImageArticle", StaticImageArticle.class)
             .build();
+    }
+
+    @Bean
+    List<Instrumentation> instrumentations() {
+        return new ArrayList<>(
+            List.of(new MaxQueryDepthInstrumentation(4)));
     }
 }
