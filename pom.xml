@@ -55,7 +55,77 @@
 			<version>11.1.0</version>
 			<scope>runtime</scope>
 		</dependency>
+		<!-- We depend on the EJB remote business interfaces of this application -->
+		<dependency>
+			<groupId>org.wildfly.quickstarts</groupId>
+			<artifactId>ejb-remote-server-side</artifactId>
+			<version>27.0.0.Beta1-SNAPSHOT</version>
+			<type>ejb-client</type>
+		</dependency>
+		<dependency>
+			<groupId>org.wildfly</groupId>
+			<artifactId>wildfly-ejb-client-bom</artifactId>
+			<type>pom</type>
+			<version>26.0.0.Final</version>
+			<scope>compile</scope>
+		</dependency>
 	</dependencies>
+
+	<repositories>
+		<repository>
+			<id>jboss-public-maven-repository</id>
+			<name>JBoss Public Maven Repository</name>
+			<url>https://repository.jboss.org/nexus/content/groups/public/</url>
+			<releases>
+				<enabled>true</enabled>
+				<updatePolicy>never</updatePolicy>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+				<updatePolicy>never</updatePolicy>
+			</snapshots>
+			<layout>default</layout>
+		</repository>
+		<repository>
+			<id>redhat-ga-maven-repository</id>
+			<name>Red Hat GA Maven Repository</name>
+			<url>https://maven.repository.redhat.com/ga/</url>
+			<releases>
+				<enabled>true</enabled>
+				<updatePolicy>never</updatePolicy>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+				<updatePolicy>never</updatePolicy>
+			</snapshots>
+			<layout>default</layout>
+		</repository>
+	</repositories>
+
+	<pluginRepositories>
+		<pluginRepository>
+			<id>jboss-public-maven-repository</id>
+			<name>JBoss Public Maven Repository</name>
+			<url>https://repository.jboss.org/nexus/content/groups/public/</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</pluginRepository>
+		<pluginRepository>
+			<id>redhat-ga-maven-repository</id>
+			<name>Red Hat GA Maven Repository</name>
+			<url>https://maven.repository.redhat.com/ga/</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</pluginRepository>
+	</pluginRepositories>
 
 	<build>
 		<plugins>
@@ -71,30 +141,65 @@
 					</excludes>
 				</configuration>
 			</plugin>
+<!--			<plugin>-->
+<!--				<groupId>com.spotify</groupId>-->
+<!--				<artifactId>dockerfile-maven-plugin</artifactId>-->
+<!--				<version>${dockerfile-maven-plugin.version}</version>-->
+<!--				<configuration>-->
+<!--					<skipPush>true</skipPush>-->
+<!--				</configuration>-->
+<!--				<executions>-->
+<!--					<execution>-->
+<!--						<id>default</id>-->
+<!--						<phase>package</phase>-->
+<!--						<goals>-->
+<!--							<goal>build</goal>-->
+<!--						</goals>-->
+<!--						<configuration>-->
+<!--							<tag>${git.revision}</tag>-->
+<!--							<repository>realworld/graphql-demo</repository>-->
+<!--							<buildArgs>-->
+<!--								<JAR_FILE>${project.build.finalName}.jar</JAR_FILE>-->
+<!--								<JAR_NAME>${project.artifactId}.jar</JAR_NAME>-->
+<!--							</buildArgs>-->
+<!--						</configuration>-->
+<!--					</execution>-->
+<!--				</executions>-->
+<!--			</plugin>-->
+			<!-- Add the maven exec plug-in to allow us to run a java program
+    via maven -->
 			<plugin>
-				<groupId>com.spotify</groupId>
-				<artifactId>dockerfile-maven-plugin</artifactId>
-				<version>${dockerfile-maven-plugin.version}</version>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
 				<configuration>
-					<skipPush>true</skipPush>
+					<executable>java</executable>
+					<workingDirectory>${project.build.directory}/exec-working-directory</workingDirectory>
+					<arguments>
+						<argument>-Dhttp=${http}</argument>
+						<argument>-classpath</argument>
+						<classpath></classpath>
+						<argument>org.jboss.as.quickstarts.ejb.remote.client.RemoteEJBClient</argument>
+					</arguments>
+					<!--<detail>true</detail>-->
 				</configuration>
-				<executions>
-					<execution>
-						<id>default</id>
-						<phase>package</phase>
-						<goals>
-							<goal>build</goal>
-						</goals>
-						<configuration>
-							<tag>${git.revision}</tag>
-							<repository>realworld/graphql-demo</repository>
-							<buildArgs>
-								<JAR_FILE>${project.build.finalName}.jar</JAR_FILE>
-								<JAR_NAME>${project.artifactId}.jar</JAR_NAME>
-							</buildArgs>
-						</configuration>
-					</execution>
-				</executions>
+			</plugin>
+			<!-- build standalone exe jar -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<configuration>
+					<descriptorRefs>
+						<descriptorRef>jar-with-dependencies</descriptorRef>
+					</descriptorRefs>
+					<archive>
+						<manifest>
+							<mainClass>org.jboss.as.quickstarts.ejb.remote.client.RemoteEJBClient</mainClass>
+						</manifest>
+						<manifestEntries>
+							<Multi-Release>true</Multi-Release>
+						</manifestEntries>
+					</archive>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>
