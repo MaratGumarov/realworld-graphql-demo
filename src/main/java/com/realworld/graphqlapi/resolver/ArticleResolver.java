@@ -7,7 +7,6 @@ import com.realworld.graphqlapi.model.Article;
 import com.realworld.graphqlapi.model.Author;
 import com.realworld.graphqlapi.model.Label;
 import com.realworld.graphqlapi.repository.ArticleRepository;
-
 import com.realworld.graphqlapi.repository.AuthorRepository;
 import graphql.execution.DataFetcherResult;
 import graphql.kickstart.tools.GraphQLQueryResolver;
@@ -18,10 +17,15 @@ import graphql.relay.DefaultEdge;
 import graphql.relay.DefaultPageInfo;
 import graphql.relay.Edge;
 import lombok.RequiredArgsConstructor;
+import org.jboss.as.quickstarts.ejb.remote.stateless.RemoteCalculator;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Component
@@ -30,6 +34,8 @@ public class ArticleResolver implements GraphQLQueryResolver {
     private final ArticleRepository articleRepository;
     private final AuthorRepository authorRepository;
     private final ConnectionCursorUtil cursorUtil;
+
+    private final RemoteCalculator calculator;
 
     public List<Article> findArticleByIds(List<UUID> ids) {
         return ids.stream().map(articleRepository::getById).collect(Collectors.toList());
@@ -51,9 +57,9 @@ public class ArticleResolver implements GraphQLQueryResolver {
         }
 
         return DataFetcherResult.<List<Article>>newResult()
-                .data(responseData)
-                .error(new AuthorIsNotPresentException("failed to get author for ids:", failData))
-                .build();
+            .data(responseData)
+            .error(new AuthorIsNotPresentException("failed to get author for ids:", failData))
+            .build();
     }
 
     public Article articleById(UUID id) {
@@ -97,7 +103,16 @@ public class ArticleResolver implements GraphQLQueryResolver {
                 edges.size() >= first));
     }
 
-    public Author authorById(UUID uuid){
+    public Author authorById(UUID uuid) {
         return authorRepository.getById(uuid);
+    }
+
+    public int add(int a, int b) {
+        return calculator.add(a, b);
+    }
+
+    public int subtract(int a, int b) {
+
+        return calculator.subtract(a, b);
     }
 }
