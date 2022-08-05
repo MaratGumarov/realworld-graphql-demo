@@ -6,8 +6,6 @@ import com.realworld.graphqlapi.repository.ArticleRepository;
 import com.realworld.graphqlapi.repository.AuthorRepository;
 import com.realworld.graphqlapi.repository.DummyArticleRepository;
 import com.realworld.graphqlapi.repository.DummyAuthorRepository;
-import graphql.analysis.MaxQueryDepthInstrumentation;
-import graphql.execution.instrumentation.Instrumentation;
 import graphql.kickstart.tools.SchemaParserDictionary;
 import lombok.extern.slf4j.Slf4j;
 import org.jboss.as.quickstarts.ejb.remote.stateless.RemoteCalculator;
@@ -17,9 +15,7 @@ import org.springframework.context.annotation.Configuration;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-import java.util.ArrayList;
 import java.util.Hashtable;
-import java.util.List;
 
 @Configuration
 @Slf4j
@@ -41,11 +37,11 @@ public class SampleDataConfiguration {
             .add("StaticImageArticle", StaticImageArticle.class);
     }
 
-    @Bean
-    List<Instrumentation> instrumentations() {
-        return new ArrayList<>(
-            List.of(new MaxQueryDepthInstrumentation(4)));
-    }
+//    @Bean
+//    List<Instrumentation> instrumentations() {
+//        return new ArrayList<>(
+//            List.of(new MaxQueryDepthInstrumentation(4)));
+//    }
 
     @Bean
     RemoteCalculator lookupRemoteStatelessCalculator() throws NamingException {
